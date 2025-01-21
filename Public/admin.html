@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        /* General Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* Basic Styling for Body */
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background-color: #f0f2f5; 
+            color: #333; line-height: 1.6; 
+        }
+
+        /* Header Styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: #4a90e2;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #logoutBtn {
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #logoutBtn:hover { background-color: #c0392b; }
+
+        #searchBar {
+            padding: 5px 15px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            width: 200px;
+            margin-left: 20px;
+        }
+
+        /* Main Container */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1700px;
+            margin: 20px auto;
+        }
+
+        /* Student List Table Styling */
+        .student-list-container {
+            width: 100%;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-list-container h3 { margin-bottom: 15px; color: #4a90e2; }
+
+        #studentList {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #studentList th, #studentList td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #studentList th {
+            background-color: #f4f6f9;
+            color: #555;
+            font-weight: bold;
+        }
+
+        #studentList tr:hover { background-color: #f9fafb; }
+
+        #studentList td button {
+            padding: 6px 12px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        #studentList td button:hover { background-color: #357ABD; }
+
+
+        /* Highlighting Is Paid */
+.paid {
+    color: green;
+    font-weight: bold;
+}
+
+.not-paid {
+    color: red;
+    font-weight: bold;
+}
+
+
+        .modal .save-btn { background-color: #4a90e2; color: white; }
+        .modal .cancel-btn { background-color: #e74c3c; color: white; }
+
+        /* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 500px; /* Set a medium width for the modal */
+    max-width: 90%;
+    max-height: 600px; /* Set a max-height to prevent it from getting too tall */
+    overflow-y: auto; /* Enable scrolling if content exceeds max height */
+    transition: all 0.3s ease-in-out;
+}
+
+/* Activate the modal */
+.modal.active {
+    display: block;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Show the overlay when modal is active */
+.modal-overlay.active {
+    display: block;
+}
+
+/* Modal Title */
+.modal h3 {
+    text-align: center;
+    color: #4a90e2;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+/* Form Labels */
+.modal label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+    color: #555;
+}
+
+/* Form Inputs */
+.modal input,
+.modal select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+/* Focus effect for inputs */
+.modal input:focus,
+.modal select:focus {
+    border-color: #4a90e2;
+    outline: none;
+}
+
+/* Button Styling */
+.modal button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+}
+
+/* Save Button */
+.modal .save-btn {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+}
+
+/* Save Button Hover */
+.modal .save-btn:hover {
+    background-color: #357ABD;
+}
+
+/* Cancel Button */
+.modal .cancel-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    margin-top: 10px;
+}
+
+/* Cancel Button Hover */
+.modal .cancel-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Modal Form Padding */
+.modal form {
+    padding: 0 20px;
+}
+
+/* Spacing between fields */
+.modal input, .modal select {
+    margin-bottom: 15px;
+}
+
+/* For smaller screens */
+@media (max-width: 600px) {
+    .modal {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .modal h3 {
+        font-size: 20px;
+    }
+
+    .modal label, .modal input, .modal select {
+        font-size: 14px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Admin Dashboard</h2>
+        <div>
+            <input type="text" id="searchBar" placeholder="Search by LRN">
+            <button id="logoutBtn">Log Out</button>
+        </div>
+    </header>    
+
+    <div class="container">
+        <div class="student-list-container">
+            <h3>List of Students</h3>
+            <table id="studentList">
+                <thead>
+                    <tr>
+                        <th>LRN</th>
+                        <th>FULLNAME</th>
+                        <th>Grade</th>
+                        <th>Section</th>
+                        <th>Fee Type</th>
+                        <th>Amount</th>
+                        <th>REM. BAL.</th>
+                        <th>Date</th>
+                        <th>Paid Months</th>
+                        <th>Is Paid</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+<!-- Modal for Adding/Editing Fee -->
+<div class="modal-overlay"></div>
+<div class="modal">
+    <h3 id="modalTitle">Edit Fee</h3>
+    <form id="feeForm">
+        <label for="feeType">Fee Type:</label>
+        <input type="text" id="feeType" name="feeType" required><br><br>
+        
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" required><br><br>
+
+        <label for="remainingBalance">Remaining Balance:</label>
+        <input id="remainingBalance" type="number"> <!-- Added Remaining Balance Input -->
+        
+        <label for="paidDate">Paid Date:</label>
+        <input type="date" id="paidDate" name="paidDate"><br><br> <!-- Optional Field -->
+
+        <label for="paidMonths">Paid Months:</label>
+        <input type="text" id="paidMonths" name="paidMonths" placeholder="e.g., Jan, Feb" required>
+        
+        <label for="isPaid">Is Paid:</label>
+        <select id="isPaid" name="isPaid">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select><br><br>
+
+        <button type="button" class="save-btn">Save</button>
+        <button type="button" class="cancel-btn">Cancel</button>
+    </form>
+</div>
+
+    <script>
+        // Load student data and modify display structure
+        function loadStudents() {
+    fetch('/students')
+        .then(response => response.json())
+        .then(students => {
+            const tbody = document.querySelector('#studentList tbody');
+            tbody.innerHTML = ''; // Clear the table before loading new data
+
+            students.forEach(student => {
+                const feeRows = student.fees.length || 1;
+
+                student.fees.forEach((fee, index) => {
+                    const row = document.createElement('tr');
+
+                    if (index === 0) {
+                        row.innerHTML = `
+                            <td rowspan="${feeRows}">${student.lrn}</td>
+                            <td rowspan="${feeRows}">${student.name}</td>
+                            <td rowspan="${feeRows}">${student.grade}</td>
+                            <td rowspan="${feeRows}">${student.section}</td>
+                        `;
+                    }
+
+                    row.innerHTML += `
+                        <td>${fee.feeType}</td>
+                        <td>${fee.amount}</td>
+                        <td>${fee.remainingBalance || 'N/A'}</td>
+                        <td>${fee.paidDate || 'N/A'}</td>
+                        <td>${fee.paidMonths || 'N/A'}</td> <!-- New Paid Months Column -->
+                        <td class="${fee.isPaid ? 'paid' : 'not-paid'}">${fee.isPaid ? 'Yes' : 'No'}</td>
+                        <td>
+                            ${index === 0 ? `<button onclick="openAddFeeModal('${student._id}')">Add Fee</button>` : ''}
+                            <button onclick="openEditModal('${student._id}', '${index}', '${fee.feeType}', '${fee.amount}', '${fee.remainingBalance}', '${fee.paidDate}', '${fee.isPaid}', '${fee.paidMonths}')">Edit</button>
+                            <button onclick="removeFee('${student._id}', ${index})">Remove</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                if (student.fees.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.lrn}</td>
+                        <td>${student.name}</td>
+                        <td>${student.grade}</td>
+                        <td>${student.section}</td>
+                        <td colspan="6" style="text-align: center;">No fees available</td>
+                        <td>
+                            <button onclick="openAddFeeModal('${student._id}')">Add Fee</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching students:', error));
+}
+
+    // Open Modal for Editing Fee
+    function openEditModal(studentId, feeIndex, feeType, amount, remainingBalance, paidDate, isPaid, paidMonths) {
+    const modal = document.querySelector('.modal');
+    const overlay = document.querySelector('.modal-overlay');
+
+    document.querySelector('#modalTitle').textContent = 'Edit Fee';
+    document.querySelector('#feeType').value = feeType;
+    document.querySelector('#amount').value = amount;
+    document.querySelector('#remainingBalance').value = remainingBalance || '';
+    document.querySelector('#paidDate').value = paidDate || '';
+    document.querySelector('#isPaid').value = isPaid || '';
+    document.querySelector('#paidMonths').value = paidMonths || ''; // Add Paid Months
+
+    modal.classList.add('active');
+    overlay.classList.add('active');
+
+    document.querySelector('.save-btn').onclick = () => saveFee(studentId, feeIndex);
+    document.querySelector('.cancel-btn').onclick = closeModal;
+}
+
+// Save the edited fee
+function saveFee(studentId, feeIndex) {
+    const feeType = document.querySelector('#feeType').value;
+    const amount = document.querySelector('#amount').value;
+    const remainingBalance = document.querySelector('#remainingBalance').value || null;
+    const paidDate = document.querySelector('#paidDate').value || null;
+    const isPaid = document.querySelector('#isPaid').value || null;
+    const paidMonths = document.querySelector('#paidMonths').value || null; // Add Paid Months
+
+    if (!feeType || !amount || isPaid === null || remainingBalance === '' || !paidMonths) {
+        alert('Please fill all the required fields!');
+        return;
+    }
+
+    fetch(`/edit-fee/${encodeURIComponent(studentId)}/${feeIndex}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feeType, amount, remainingBalance, paidDate, isPaid, paidMonths })
+    })
+        .then(response => response.ok ? response.json() : response.text())
+        .then(data => {
+            if (typeof data === 'string') {
+                alert('Error updating fee: ' + data);
+            } else {
+                alert('Fee updated successfully!');
+                loadStudents();
+                closeModal();
+            }
+        })
+        .catch(error => console.error('Error saving fee:', error));
+}
+
+// Open Modal for Adding Fee
+function openAddFeeModal(id) {
+    const modal = document.querySelector('.modal');
+    const overlay = document.querySelector('.modal-overlay');
+    
+    document.querySelector('#modalTitle').textContent = 'Add Fee';
+    document.querySelector('#feeType').value = ''; // Clear Fee Type input
+    document.querySelector('#amount').value = ''; // Clear Amount input
+    document.querySelector('#remainingBalance').value = ''; // Clear Remaining Balance input
+    document.querySelector('#paidDate').value = ''; // Clear Paid Date input
+    document.querySelector('#isPaid').value = ''; // Default Is Paid value (optional)
+
+    modal.classList.add('active'); // Show modal
+    overlay.classList.add('active');
+
+    // Set button actions
+    document.querySelector('.save-btn').onclick = () => addFee(id);
+    document.querySelector('.cancel-btn').onclick = closeModal;
+}
+
+// Add a New Fee
+function addFee(studentId) {
+    const feeType = document.querySelector('#feeType').value;
+    const amount = document.querySelector('#amount').value;
+    const remainingBalance = document.querySelector('#remainingBalance').value || null;
+    const paidDate = document.querySelector('#paidDate').value || null;
+    const isPaid = document.querySelector('#isPaid').value || null;
+    const paidMonths = document.querySelector('#paidMonths').value || null; // Add Paid Months
+
+    if (!feeType || !amount || isPaid === null || remainingBalance === '' ) {
+        alert('Please fill all the required fields!');
+        return;
+    }
+
+    fetch(`/add-fee/${encodeURIComponent(studentId)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feeType, amount, remainingBalance, paidDate, isPaid, paidMonths })
+    })
+        .then(response => response.ok ? response.json() : response.text())
+        .then(data => {
+            if (typeof data === 'string') {
+                alert('Error adding fee: ' + data);
+            } else {
+                alert('Fee added successfully!');
+                loadStudents();
+                closeModal();
+            }
+        })
+        .catch(error => console.error('Error adding fee:', error));
+}
+
+                // Close Modal
+                function closeModal() {
+            document.querySelector('.modal').classList.remove('active');
+            document.querySelector('.modal-overlay').classList.remove('active');
+        }
+
+        function removeFee(studentId, feeIndex) {
+    if (confirm('Are you sure you want to remove this fee?')) {
+        fetch(`/remove-fee/${encodeURIComponent(studentId)}/${feeIndex}`, { method: 'DELETE' })
+            .then((response) => {
+                if (response.ok) {
+                    alert('Fee removed successfully!');
+                    loadStudents(); // Reload student list
+                } else {
+                    return response.text(); // Get the response message for debugging
+                }
+            })
+            .then((errorText) => {
+                if (errorText) {
+                    alert('Error removing fee: ' + errorText);
+                }
+            })
+            .catch((error) => console.error('Error removing fee:', error));
+    }
+}
+
+function validateFeeInputs() {
+    const feeType = document.querySelector('#feeType').value;
+    const amount = document.querySelector('#amount').value;
+    const isPaid = document.querySelector('#isPaid').value;
+
+    if (!feeType || !amount || isPaid === '') {
+        alert('Please fill all required fields.');
+        return false;
+    }
+    return true;
+}
+
+// Improved search functionality
+document.querySelector('#searchBar').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#studentList tbody tr');
+
+    rows.forEach(row => {
+        let lrn = '';
+        let displayRow = false;
+
+        // Find the LRN cell, handling rowspan
+        const lrnCells = row.querySelectorAll('td:first-child');
+        if (lrnCells.length > 0) {
+           lrn = lrnCells[0].textContent.toLowerCase().trim();
+        }
+
+        // Check if LRN matches the search term (case-insensitive)
+        if (lrn.includes(searchTerm)) {
+            displayRow = true;
+        }
+
+        //If no match on LRN, check Fee Type (if applicable)
+        const feeTypeCells = row.querySelectorAll('td:nth-child(5)'); //Fee Type is in the 5th column
+        if(!displayRow && feeTypeCells.length>0){
+            if(feeTypeCells[0].textContent.toLowerCase().trim().includes(searchTerm)){
+                displayRow = true;
+            }
+        }
+
+        row.style.display = displayRow ? '' : 'none';
+    });
+});
+
+        // Load students when page loads
+        loadStudents();
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Logged out successfully!');
+                        window.location.href = 'index.html'; // Redirect to login page
+                    } else {
+                        alert('Error logging out!');
+                    }
+                })
+                .catch(error => console.error('Error logging out:', error));
+        });
+
+    </script>
+</body>
+</html>

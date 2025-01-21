@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Form</title>
+    <style>
+        /* Reset basic styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f2f9f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            max-width: 500px;
+            width: 100%;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .gcash-image {
+            display: block;
+            margin: 0 auto 20px auto;
+            max-width: 300px;
+            height: auto;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, textarea, button, select {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            width: 100%;
+            /* Ensuring uniform height */
+            height: 40px;
+        }
+
+        select {
+            /* Match the appearance of input fields */
+            appearance: none; /* For consistent appearance across browsers */
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .file-upload {
+            border: 2px dashed #ccc;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .file-upload:hover {
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        .back-button {
+            background-color: #ff6f61;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #e55a4e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Payment Form</h2>
+        <img src="./images/gcash.jpg" alt="GCash Logo" class="gcash-image">
+        
+        <form id="payment-form">
+            <label for="lrn">Student LRN</label>
+            <input type="text" id="lrn" name="lrn" placeholder="Enter your LRN" required>
+    
+            <label for="grade-section">Grade & Section</label>
+            <input type="text" id="grade-section" name="grade-section" placeholder="Enter your Grade & Section" required>
+    
+            <label for="fee-type">Fee Type</label>
+            <select id="fee-type" name="fee-type" required>
+                <option value="PTA DONATION">PTA DONATION</option>
+                <option value="PTA REGISTRATION">PTA REGISTRATION</option>
+                <option value="SCHOOL PUBLICATION">SCHOOL PUBLICATION</option>
+                <option value="SSLG">SSLG</option>
+                <option value="STEP">STEP</option>
+                <option value="BSP">BSP</option>
+                <option value="GSP">GSP</option>
+                <option value="RED CROSS">RED CROSS</option>
+                <option value="BSP/GSP TICKET">BSP/GSP TICKET</option>
+                <option value="ANTI-TB">ANTI-TB</option>
+                <option value="SCHOOL ID">SCHOOL ID</option>
+            </select>
+    
+            <label for="amount">Amount Paid</label>
+            <input type="number" id="amount" name="amount" placeholder="Enter the amount" required>
+    
+            <label for="ref-number">Gcash Reference Number</label>
+            <input type="number" id="ref-number" name="ref-number" placeholder="Enter reference number" required>
+    
+            <label for="gcash-contact-number">Contact Number (Gcash)</label>
+            <input type="number" id="gcash-contact-number" name="gcash-contact-number" placeholder="Enter GCash contact number" required>
+    
+            <label for="contact-number">Contact Number</label>
+            <input type="number" id="contact-number" name="contact-number" placeholder="Enter contact number" required>
+    
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" required>
+    
+            <button type="submit">Submit Payment</button>
+        </form>
+    
+        <button class="back-button" onclick="window.history.back();">Back</button>
+    </div>
+
+    <!-- EmailJS script -->
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        const paymentForm = document.getElementById('payment-form');
+        const submitButton = paymentForm.querySelector('button[type="submit"]'); // Get the submit button
+    
+        // Initialize EmailJS
+        emailjs.init('DMnCAgmJealAtfEYQ'); // Replace with your actual EmailJS public key
+    
+        paymentForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+    
+            // Gather form data
+            const formData = new FormData(paymentForm);
+            const paymentDetails = {
+                lrn: formData.get('lrn'),
+                grade_section: formData.get('grade-section'),
+                fee_type: formData.get('fee-type'),
+                amount_paid: formData.get('amount'),
+                reference_number: formData.get('ref-number'),
+                gcash_contact: formData.get('gcash-contact-number'),
+                contact_number: formData.get('contact-number'),
+                payment_date: formData.get('date'),
+            };
+    
+            console.log('Payment Details:', paymentDetails); // Debugging output
+    
+            // Disable the submit button to prevent multiple submissions
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...'; // Change text to show it's processing
+    
+            // EmailJS integration
+            try {
+                const emailResponse = await emailjs.send('service_8z1tyo8', 'template_qhk0u1a', paymentDetails);
+                console.log('Email Response:', emailResponse); // Debugging output
+                alert('Payment submitted successfully. Confirmation email sent!');
+                
+                // Redirect to student.html
+                window.location.href = 'student.html';
+            } catch (error) {
+                console.error('EmailJS Error:', error); // Log full error details
+                alert('Payment submitted, but email could not be sent. Please try again later.');
+            } finally {
+                // Re-enable the button and reset text if needed (in case of failure)
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Payment'; // Reset button text
+            }
+        });
+    </script>    
+</body>
+</html>

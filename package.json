@@ -1,0 +1,25 @@
+{
+  "name": "school-fee-management",
+  "version": "1.0.0",
+  "description": "A school fee management system",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.0",
+    "firebase": "^11.0.2",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.8.3",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.16",
+    "nodemon": "^3.1.7"
+  },
+  "author": "",
+  "license": "ISC"
+}

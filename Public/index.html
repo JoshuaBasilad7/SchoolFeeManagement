@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* Reset basic styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Background styling with vibrant gradient */
+        body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        background-image: url(images/pagcor2.png);
+        background-repeat: no-repeat;
+        background-size: cover; /* Optional: Ensures the image covers the entire background */
+        background-position: center; /* Optional: Centers the image */
+        }
+
+        /* Login form container styling */
+        #loginForm {
+            position: relative;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 3em 2.5em;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            z-index: 2;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5em;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Styling labels */
+        label {
+            display: block;
+            font-size: 1rem;
+            color: #e0e0e0;
+            margin-bottom: 0.5em;
+        }
+
+        img {
+            width: 100px;
+            height: 100px;
+            padding-bottom: 5px;
+        }
+
+        /* Input field styling */
+        input[type="number"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.3);
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 1em;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        input[type="number"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            border: none;
+            background-color: rgba(255, 255, 255, 0.5);
+            outline: 2px solid #2575fc;
+        }
+
+        /* Styling the login button */
+        button[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background: #013220;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            background: #90EE90;
+            transform: translateY(-3px);
+        }
+
+        /* Footer text styling */
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.9rem;
+            color: #fff;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Responsive design for smaller devices */
+        @media (max-width: 400px) {
+            #loginForm {
+                padding: 2em;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Form -->
+    <form id="loginForm">
+        <img src="images/favicon.png" alt="">
+        <h2>Login </h2>
+        <label for="lrn">LRN / USERNAME:</label>
+        <input type="number" id="lrn" name="lrn" required>
+
+        <label for="password">PASSWORD:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="role">ROLE:</label>
+        <select id="role" name="role" required>
+            <option value="" disabled selected>Select your role</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <button type="submit">LOGIN</button>
+    </form>
+
+    <script>
+        // Handle role change to update the heading
+        document.getElementById('role').addEventListener('change', function () {
+            const role = this.value;
+            const heading = document.querySelector('#loginForm h2');
+            if (role === 'admin') {
+                heading.textContent = 'Admin Login ';
+            } else if (role === 'teacher') {
+                heading.textContent = 'Teacher Login ';
+            } else {
+                heading.textContent = 'Student Login ';
+            }
+        });
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const lrn = document.getElementById('lrn').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ lrn, password, role })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Login failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.message === 'Login successful') {
+                    if (role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else if (role === 'teacher') {
+                        window.location.href = 'teacher.html';
+                    } else if (role === 'student') {
+                        window.location.href = 'student.html';
+                    }
+                } else {
+                    alert('Invalid LRN, password, or role');
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                alert('Invalid LRN, password, or role');
+            });
+        });
+    </script>
+</body>
+</html>

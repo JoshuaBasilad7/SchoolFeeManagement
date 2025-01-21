@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        /* Reset some basic styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f2f9f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Styling the logout button */
+        #logoutBtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        #logoutBtn:hover {
+            background-color: #45a049;
+        }
+
+        /* Styling the table */
+        #feeTable {
+            width: 100%;
+            max-width: 800px;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        /* Alternate row colors */
+        tr:nth-child(even) td {
+            background-color: #f1fdf1;
+        }
+
+        /* Hover effect for rows */
+        tr:hover td {
+            background-color: #e8f5e9;
+        }
+
+        /* Responsive table */
+        @media (max-width: 600px) {
+            #feeTable {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        /* Highlighting Is Paid */
+        .paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .not-paid {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* Styling the "Pay Here" button */
+        .pay-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .pay-button:hover {
+            background-color: #0056b3;
+        }
+
+        .pay-button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        /* Styling the "Contact Number" button */
+        #contactBtn {
+            background-color: #ff9800;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        #contactBtn:hover {
+            background-color: #fb8c00;
+        }
+
+    </style>
+</head>
+<body>
+    <h2>Student Dashboard</h2>
+
+    <h3>Fee Details</h3>
+    <table id="feeTable">
+        <thead>
+            <tr>
+                <th>Fee Type</th>
+                <th>Amount</th>
+                <th>Remaining Balance</th>
+                <th>Paid Date</th>
+                <th>Paid Months</th> <!-- New Column -->
+                <th>Is Paid</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Fee details will be inserted here -->
+        </tbody>
+    </table>
+
+    <!-- Contact Number Button -->
+    <button id="contactBtn">Contact Number of the Admin</button>
+
+    <button id="logoutBtn">Logout</button>
+
+    <script>
+        // Fetching fee data from the backend
+        fetch('/student-fees')
+            .then(response => response.json())
+            .then(data => {
+                const feeTable = document.getElementById('feeTable').getElementsByTagName('tbody')[0];
+
+                if (data.fees && data.fees.length > 0) {
+                    data.fees.forEach(fee => {
+                        const row = feeTable.insertRow();
+
+                        // Fee Type
+                        row.insertCell(0).textContent = fee.feeType;
+
+                        // Amount
+                        row.insertCell(1).textContent = fee.amount;
+
+                        // Remaining Balance
+                        row.insertCell(2).textContent = fee.remainingBalance;
+
+                        // Paid Date
+                        row.insertCell(3).textContent = fee.paidDate || 'Not Paid';
+
+                        // Paid Months
+                        row.insertCell(4).textContent = fee.paidMonths?.join(', ') || 'N/A';
+
+                        // Is Paid
+                        const isPaidCell = row.insertCell(5);
+                        isPaidCell.textContent = fee.isPaid ? 'Yes' : 'No';
+                        isPaidCell.className = fee.isPaid ? 'paid' : 'not-paid';
+
+                        // Actions
+                        const actionCell = row.insertCell(6);
+                        const payButton = document.createElement('button');
+                        payButton.textContent = 'Pay Here';
+                        payButton.className = 'pay-button';
+                        payButton.disabled = fee.isPaid;
+                        payButton.addEventListener('click', () => {
+                            window.location.href = `pay.html?feeType=${encodeURIComponent(fee.feeType)}`;
+                        });
+                        actionCell.appendChild(payButton);
+                    });
+                } else {
+                    // If no fees available
+                    const row = feeTable.insertRow();
+                    row.insertCell(0).colSpan = 7; // Adjusted for new column
+                    row.cells[0].textContent = 'No fees available';
+                    row.cells[0].style.textAlign = 'center';
+                    row.cells[0].style.fontWeight = 'bold';
+                    row.cells[0].style.color = '#d32f2f';
+                }
+            })
+            .catch(error => console.error('Error fetching student fees:', error));
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Logged out successfully!');
+                        window.location.href = 'index.html'; // Redirect to login page
+                    } else {
+                        alert('Error logging out!');
+                    }
+                })
+                .catch(error => console.error('Error logging out:', error));
+        });
+
+        // Handle "Update Contact Number" button click
+        document.getElementById('contactBtn').addEventListener('click', () => {
+            // Example: Redirect to contact update page
+            window.location.href = 'contact.html'; // This page will handle updating the contact number
+        });
+    </script>
+</body>
+</html>

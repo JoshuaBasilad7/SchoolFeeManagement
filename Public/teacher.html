@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <style>
+                /* General Reset */
+                * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header Styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: #4a90e2;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #logoutBtn {
+            padding: 10px 25px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #logoutBtn:hover {
+            background-color: darkred;
+        }
+
+        /* Main Container */
+        .container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1300px;
+            margin: 20px auto;
+            position: relative; /* Ensure relative positioning for alignment */
+        }
+
+        /* Student List Styling */
+        .student-list-container {
+            flex: 1; /* Take up remaining space */
+    margin-right: 340px; /* Adjust for the form width + margin */
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+        }
+
+        .student-list-container h3 {
+            margin-bottom: 15px;
+            color: #4a90e2;
+        }
+
+        #studentList {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #studentList th,
+        #studentList td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #studentList th {
+            background-color: #f4f6f9;
+            color: #555;
+            font-weight: bold;
+        }
+
+        #studentList tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .delete-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+
+        /* Form Styling */
+        .form-container {
+            position: fixed;
+    top: 100px; /* Adjust based on your header height */
+    right: 20px; /* Add some margin from the right edge */
+    width: 300px; /* Fixed width for the form */
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Ensure it stays on top */
+
+        }
+
+        .form-container h3 {
+            color: #4a90e2;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                position: static; /* Revert to normal for smaller screens */
+        width: 100%; /* Take full width */
+        margin-top: 20px;
+            }
+            
+            .student-list-container {
+        margin-right: 0; /* Reset margin */
+    }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Teacher Dashboard</h2>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <input 
+                type="text" 
+                id="searchstudentName" 
+                placeholder="Search by Student Name" 
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
+            >
+            <button id="logoutBtn">Log Out</button>
+        </div>
+    </header>    
+    
+    <div class="container">
+        <!-- Student List -->
+        <div class="student-list-container">
+            <h3>List of Students</h3>
+            <table id="studentList">
+                <thead>
+                    <tr>
+                        <th>LRN</th>
+                        <th>FULLNAME</th>
+                        <th>PASSWORD</th>
+                        <th>GRADE</th>
+                        <th>SECTION</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+        <!-- Add Student Form -->
+        <div class="form-container">
+            <h3>Add New Student</h3>
+            <form id="addStudentForm">
+                <label for="studentLrn">LRN:</label>
+                <input type="number" id="studentLrn" name="studentLrn" required>
+    
+                <label for="studentName">FULLNAME:</label>
+                <input type="text" id="studentName" name="studentName" required>
+    
+                <label for="studentPassword">PASSWORD:</label>
+                <input type="password" id="studentPassword" name="studentPassword" required>
+    
+                <label for="grade">GRADE:</label>
+                <input type="text" id="grade" name="grade" required>
+    
+                <label for="section">SECTION:</label>
+                <input type="text" id="section" name="section" required>
+    
+                <button type="submit">ADD STUDENT</button>
+            </form>
+        </div>
+    </div>
+        
+    <script>
+// Fetch and display students
+function loadStudentsForTeacher() {
+    fetch('/students')
+        .then((response) => response.json())
+        .then((students) => {
+            const tbody = document.querySelector('#studentList tbody');
+            tbody.innerHTML = ''; // Clear the table body
+
+            students.forEach((student) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.lrn}</td>
+                    <td>${student.name}</td>
+                    <td>${student.password}</td>
+                    <td>${student.grade}</td>
+                    <td>${student.section}</td>
+                    <td><button class="delete-btn" data-id="${student.lrn}">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Add event listener for delete buttons
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-id');
+                    deleteStudent(studentId, this.closest('tr'));
+                });
+            });
+        })
+        .catch((error) => console.error('Error fetching students:', error));
+}
+
+document.getElementById('searchstudentName').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#studentList tbody tr');
+
+    rows.forEach(row => {
+        try {
+            const studentNameCell = row.cells[1]; // Student Name is in the 2nd column (index 1)
+            const studentName = studentNameCell.textContent.toLowerCase();
+            row.style.display = studentName.includes(searchTerm) ? '' : 'none';
+        } catch (error) {
+            console.error("Error processing row:", error); // Log errors for debugging
+        }
+    });
+});
+
+        // Add a new student
+document.getElementById('addStudentForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const studentData = {
+        lrn: document.getElementById('studentLrn').value,
+        name: document.getElementById('studentName').value, // New Name Field
+        password: document.getElementById('studentPassword').value,
+        grade: document.getElementById('grade').value,
+        section: document.getElementById('section').value,
+    };
+
+    fetch('/add-student', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(studentData),
+    })
+        .then((response) => response.text())
+        .then((message) => {
+            alert(message);
+            loadStudentsForTeacher();
+            document.getElementById('addStudentForm').reset(); // Clear form fields
+        })
+        .catch((error) => console.error('Error adding student:', error));
+});
+
+// Delete student
+function deleteStudent(lrn, rowElement) {
+    if (confirm("Are you sure you want to delete this student? This action cannot be undone.")) {
+        console.log("Attempting to delete student with LRN:", lrn); // Log to debug
+        fetch(`/remove-student/${lrn}`, { method: 'DELETE' }) // Updated route
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.message) {
+                    alert(data.message); // Success message from backend
+                    rowElement.remove(); // Remove the row from the table
+                } else {
+                    alert('Failed to delete student');
+                }
+            })
+            .catch((error) => {
+                console.error('Error deleting student:', error);
+                alert('An error occurred while deleting the student');
+            });
+    } else {
+        console.log("Deletion canceled by user.");
+    }
+}
+
+        // Load students when the page loads
+        document.addEventListener('DOMContentLoaded', loadStudentsForTeacher);
+
+                // Logout functionality
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Logged out successfully!');
+                        window.location.href = 'index.html'; // Redirect to login page
+                    } else {
+                        alert('Error logging out!');
+                    }
+                })
+                .catch(error => console.error('Error logging out:', error));
+        });
+
+    </script>
+</body>
+</html>
